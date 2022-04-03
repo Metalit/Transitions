@@ -4,7 +4,7 @@
   "info": {
     "name": "Transitions",
     "id": "transitions",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "url": null,
     "additionalData": {
       "overrideSoName": "libtransitions.so"
@@ -27,7 +27,7 @@
     },
     {
       "id": "codegen",
-      "versionRange": "^0.21.0",
+      "versionRange": "^0.22.0",
       "additionalData": {}
     },
     {
