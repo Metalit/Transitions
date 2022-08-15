@@ -16,12 +16,12 @@ Logger& getLogger() {
 }
 
 MAKE_HOOK_MATCH(InitSceneTransitions, &DefaultScenesTransitionsFromInit::TransitionToNextScene,
-        void, DefaultScenesTransitionsFromInit* self, bool goStraightToMenu, bool goStraightToEditor) {
+        void, DefaultScenesTransitionsFromInit* self, bool goStraightToMenu, bool goStraightToEditor, bool goToRecordingToolScene) {
     
     if(!getConfig().ShowWarning.GetValue())
         goStraightToMenu = true;
     
-    InitSceneTransitions(self, goStraightToMenu, goStraightToEditor);
+    InitSceneTransitions(self, goStraightToMenu, goStraightToEditor, goToRecordingToolScene);
 }
 
 MAKE_HOOK_MATCH(PushSceneTransition, &GameScenesManager::PushScenes,
