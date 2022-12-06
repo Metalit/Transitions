@@ -42,6 +42,15 @@ MAKE_HOOK_MATCH(PopSceneTransition, &GameScenesManager::PopScenes,
     PopSceneTransition(self, minDuration, afterMinDurationCallback, finishCallback);
 }
 
+MAKE_HOOK_MATCH(ReplaceSceneTransition, &GameScenesManager::ReplaceScenes,
+        void, GameScenesManager* self, ScenesTransitionSetupDataSO* scenesTransitionSetupData, ArrayW<System::Collections::IEnumerator*> beforeNewScenesActivateRoutines, float minDuration, System::Action* afterMinDurationCallback, System::Action_1<Zenject::DiContainer*>* finishCallback) {
+    
+    if(getConfig().OverrideLength.GetValue())
+        minDuration = getConfig().TransitionLength.GetValue();
+
+    ReplaceSceneTransition(self, scenesTransitionSetupData, beforeNewScenesActivateRoutines, minDuration, afterMinDurationCallback, finishCallback);
+}
+
 extern "C" void setup(ModInfo& info) {
     info.id = ID;
     info.version = VERSION;
@@ -61,5 +70,6 @@ extern "C" void load() {
     INSTALL_HOOK(getLogger(), InitSceneTransitions);
     INSTALL_HOOK(getLogger(), PushSceneTransition);
     INSTALL_HOOK(getLogger(), PopSceneTransition);
+    INSTALL_HOOK(getLogger(), ReplaceSceneTransition);
     LOG_INFO("Installed all hooks!");
 }
