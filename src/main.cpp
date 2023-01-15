@@ -17,25 +17,25 @@ Logger& getLogger() {
 
 MAKE_HOOK_MATCH(InitSceneTransitions, &DefaultScenesTransitionsFromInit::TransitionToNextScene,
         void, DefaultScenesTransitionsFromInit* self, bool goStraightToMenu, bool goStraightToEditor, bool goToRecordingToolScene) {
-    
+
     if(!getConfig().ShowWarning.GetValue())
         goStraightToMenu = true;
-    
+
     InitSceneTransitions(self, goStraightToMenu, goStraightToEditor, goToRecordingToolScene);
 }
 
 MAKE_HOOK_MATCH(PushSceneTransition, &GameScenesManager::PushScenes,
         void, GameScenesManager* self, ScenesTransitionSetupDataSO* scenesTransitionSetupData, float minDuration, System::Action* afterMinDurationCallback, System::Action_1<Zenject::DiContainer*>* finishCallback) {
-    
+
     if(getConfig().OverrideLength.GetValue())
         minDuration = getConfig().TransitionLength.GetValue();
-        
+
     PushSceneTransition(self, scenesTransitionSetupData, minDuration, afterMinDurationCallback, finishCallback);
 }
 
 MAKE_HOOK_MATCH(PopSceneTransition, &GameScenesManager::PopScenes,
         void, GameScenesManager* self, float minDuration, System::Action* afterMinDurationCallback, System::Action_1<Zenject::DiContainer*>* finishCallback) {
-    
+
     if(getConfig().OverrideLength.GetValue())
         minDuration = getConfig().TransitionLength.GetValue();
 
@@ -44,7 +44,7 @@ MAKE_HOOK_MATCH(PopSceneTransition, &GameScenesManager::PopScenes,
 
 MAKE_HOOK_MATCH(ReplaceSceneTransition, &GameScenesManager::ReplaceScenes,
         void, GameScenesManager* self, ScenesTransitionSetupDataSO* scenesTransitionSetupData, ArrayW<System::Collections::IEnumerator*> beforeNewScenesActivateRoutines, float minDuration, System::Action* afterMinDurationCallback, System::Action_1<Zenject::DiContainer*>* finishCallback) {
-    
+
     if(getConfig().OverrideLength.GetValue())
         minDuration = getConfig().TransitionLength.GetValue();
 
@@ -57,7 +57,7 @@ extern "C" void setup(ModInfo& info) {
     modInfo = info;
 
     getConfig().Init(modInfo);
-	
+
     LOG_INFO("Completed setup!");
 }
 

@@ -9,7 +9,7 @@ void SettingsDidActivate(HMUI::ViewController* self, bool firstActivation, bool 
 
     if(!firstActivation)
         return;
-    
+
     self->get_gameObject()->AddComponent<HMUI::Touchable*>();
     auto vertical = QuestUI::BeatSaberUI::CreateVerticalLayoutGroup(self);
     vertical->set_childControlHeight(false);
