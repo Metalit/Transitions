@@ -1,8 +1,7 @@
 #include "main.hpp"
 #include "settings.hpp"
 
-#include "questui/shared/BeatSaberUI.hpp"
-
+#include "bsml/shared/BSML-Lite/Creation/Layout.hpp"
 #include "HMUI/Touchable.hpp"
 
 void SettingsDidActivate(HMUI::ViewController* self, bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
@@ -11,7 +10,7 @@ void SettingsDidActivate(HMUI::ViewController* self, bool firstActivation, bool 
         return;
 
     self->get_gameObject()->AddComponent<HMUI::Touchable*>();
-    auto vertical = QuestUI::BeatSaberUI::CreateVerticalLayoutGroup(self);
+    auto vertical = BSML::Lite::CreateVerticalLayoutGroup(self);
     vertical->set_childControlHeight(false);
     vertical->set_childForceExpandHeight(false);
     vertical->set_spacing(1);

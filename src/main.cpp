@@ -3,12 +3,12 @@
 
 #include "GlobalNamespace/DefaultScenesTransitionsFromInit.hpp"
 #include "GlobalNamespace/GameScenesManager.hpp"
+#include "bsml/shared/BSML.hpp"
 
-#include "questui/shared/QuestUI.hpp"
 
 using namespace GlobalNamespace;
 
-static ModInfo modInfo;
+modloader::ModInfo modInfo{MOD_ID, VERSION, 0};
 
 Logger& getLogger() {
     static Logger* logger = new Logger(modInfo);
@@ -51,20 +51,21 @@ MAKE_HOOK_MATCH(ReplaceSceneTransition, &GameScenesManager::ReplaceScenes,
     ReplaceSceneTransition(self, scenesTransitionSetupData, beforeNewScenesActivateRoutines, minDuration, afterMinDurationCallback, finishCallback);
 }
 
-extern "C" void setup(ModInfo& info) {
-    info.id = ID;
-    info.version = VERSION;
-    modInfo = info;
+extern "C" __attribute__((visibility("default"))) void setup(CModInfo* info) {
+    info->version = VERSION;
+    info->id = MOD_ID;
+    info->version_long = 0;
+    modInfo.assign(*info);
 
     getConfig().Init(modInfo);
 
     LOG_INFO("Completed setup!");
 }
 
-extern "C" void load() {
+extern "C" __attribute__((visibility("default"))) void late_load() {
     il2cpp_functions::Init();
 
-    QuestUI::Register::RegisterModSettingsViewController(modInfo, SettingsDidActivate);
+    BSML::Register::RegisterSettingsMenu("Transitions", SettingsDidActivate, true);
 
     LOG_INFO("Installing hooks...");
     INSTALL_HOOK(getLogger(), InitSceneTransitions);

@@ -9,7 +9,7 @@ set(MOD_ID "transitions")
 # However, the instability was seen using Android.mk/ndk-build builds. With Ninja + CMake, this problem seems to have been solved.
 # As always, test thoroughly
 # - Fern
-# set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 
 cmake_minimum_required(VERSION 3.21)
 project(${COMPILE_ID})
@@ -24,8 +24,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+# stop symbol leaking
+add_link_options(-Wl,--exclude-libs,ALL)
+
 # compile options used
-add_compile_options(-frtti -fexceptions)
+add_compile_options(-frtti -fexceptions -fvisibility=hidden)
 add_compile_options(-O3)
 # compile definitions used
 add_compile_definitions(VERSION=\"${MOD_VERSION}\")
