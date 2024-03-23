@@ -1,8 +1,6 @@
 # include some defines automatically made by qpm
 include(qpm_defines.cmake)
 
-# override mod id
-set(MOD_ID "transitions")
 
 # Enable link time optimization
 # In my experience, this can be highly unstable but it nets a huge size optimization and likely performance
@@ -32,7 +30,6 @@ add_compile_options(-frtti -fexceptions -fvisibility=hidden)
 add_compile_options(-O3)
 # compile definitions used
 add_compile_definitions(VERSION=\"${MOD_VERSION}\")
-add_compile_definitions(ID=\"${MOD_ID}\")
 add_compile_definitions(MOD_ID=\"${MOD_ID}\")
 
 # recursively get all src files

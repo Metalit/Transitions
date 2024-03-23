@@ -1,4 +1,5 @@
 #include "main.hpp"
+#include "logging.hpp"
 #include "settings.hpp"
 
 #include "bsml/shared/BSML-Lite/Creation/Layout.hpp"

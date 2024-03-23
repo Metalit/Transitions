@@ -1,4 +1,5 @@
 #include "main.hpp"
+#include "logging.hpp"
 #include "settings.hpp"
 
 #include "GlobalNamespace/DefaultScenesTransitionsFromInit.hpp"
@@ -10,10 +11,6 @@ using namespace GlobalNamespace;
 
 modloader::ModInfo modInfo{MOD_ID, VERSION, 0};
 
-Logger& getLogger() {
-    static Logger* logger = new Logger(modInfo);
-    return *logger;
-}
 
 MAKE_HOOK_MATCH(InitSceneTransitions, &DefaultScenesTransitionsFromInit::TransitionToNextScene,
         void, DefaultScenesTransitionsFromInit* self, bool goStraightToMenu, bool goStraightToEditor, bool goToRecordingToolScene) {
@@ -59,7 +56,7 @@ extern "C" __attribute__((visibility("default"))) void setup(CModInfo* info) {
 
     getConfig().Init(modInfo);
 
-    LOG_INFO("Completed setup!");
+    INFO("Completed setup!");
 }
 
 extern "C" __attribute__((visibility("default"))) void late_load() {
@@ -67,10 +64,12 @@ extern "C" __attribute__((visibility("default"))) void late_load() {
 
     BSML::Register::RegisterSettingsMenu("Transitions", SettingsDidActivate, true);
 
-    LOG_INFO("Installing hooks...");
-    INSTALL_HOOK(getLogger(), InitSceneTransitions);
-    INSTALL_HOOK(getLogger(), PushSceneTransition);
-    INSTALL_HOOK(getLogger(), PopSceneTransition);
-    INSTALL_HOOK(getLogger(), ReplaceSceneTransition);
-    LOG_INFO("Installed all hooks!");
+    auto logger = Paper::ConstLoggerContext("Transitions");
+
+    INFO("Installing hooks...");
+    INSTALL_HOOK(logger, InitSceneTransitions);
+    INSTALL_HOOK(logger, PushSceneTransition);
+    INSTALL_HOOK(logger, PopSceneTransition);
+    INSTALL_HOOK(logger, ReplaceSceneTransition);
+    INFO("Installed all hooks!");
 }
