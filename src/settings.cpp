@@ -11,7 +11,7 @@ void SettingsDidActivate(HMUI::ViewController* self, bool firstActivation, bool 
         return;
 
     self->get_gameObject()->AddComponent<HMUI::Touchable*>();
-    auto vertical = BSML::Lite::CreateVerticalLayoutGroup(self);
+    UnityW<UnityEngine::UI::VerticalLayoutGroup> vertical = BSML::Lite::CreateVerticalLayoutGroup(self);
     vertical->set_childControlHeight(false);
     vertical->set_childForceExpandHeight(false);
     vertical->set_spacing(1);
