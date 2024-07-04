@@ -1,6 +1,6 @@
 #pragma once
 
-#define HAS_CODEGEN
+#include "HMUI/ViewController.hpp"
 #include "config-utils/shared/config-utils.hpp"
 
 DECLARE_CONFIG(Config,
@@ -8,7 +8,5 @@ DECLARE_CONFIG(Config,
     CONFIG_VALUE(OverrideLength, bool, "Override Scene Transitions", true, "Forces all scene transitions to be a specific duration");
     CONFIG_VALUE(TransitionLength, float, "Scene Transitions Length", 0.2, "The duration to force for all transitions");
 )
-
-#include "HMUI/ViewController.hpp"
 
 void SettingsDidActivate(HMUI::ViewController* self, bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling);

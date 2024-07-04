@@ -1,22 +1,24 @@
-#include "main.hpp"
 #include "settings.hpp"
 
-#include "questui/shared/BeatSaberUI.hpp"
-
 #include "HMUI/Touchable.hpp"
+#include "bsml/shared/BSML-Lite.hpp"
+#include "main.hpp"
 
 void SettingsDidActivate(HMUI::ViewController* self, bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
-
-    if(!firstActivation)
+    if (!firstActivation)
         return;
 
-    self->get_gameObject()->AddComponent<HMUI::Touchable*>();
-    auto vertical = QuestUI::BeatSaberUI::CreateVerticalLayoutGroup(self);
-    vertical->set_childControlHeight(false);
-    vertical->set_childForceExpandHeight(false);
-    vertical->set_spacing(1);
+    self->gameObject->AddComponent<HMUI::Touchable*>();
+    auto vertical = BSML::Lite::CreateVerticalLayoutGroup(self);
+    vertical->childControlHeight = false;
+    vertical->childForceExpandHeight = false;
+    vertical->spacing = 1;
+    vertical->rectTransform->anchoredPosition = {-6, -6};
 
     AddConfigValueToggle(vertical, getConfig().ShowWarning);
     AddConfigValueToggle(vertical, getConfig().OverrideLength);
     AddConfigValueIncrementFloat(vertical, getConfig().TransitionLength, 1, 0.1, 0, 2);
+
+    for (int i = 0; i < vertical->transform->childCount; i++)
+        vertical->transform->GetChild(i)->GetComponent<UnityEngine::UI::LayoutElement*>()->preferredWidth = 75;
 }
