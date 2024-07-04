@@ -13,7 +13,7 @@ void SettingsDidActivate(HMUI::ViewController* self, bool firstActivation, bool 
     vertical->childControlHeight = false;
     vertical->childForceExpandHeight = false;
     vertical->spacing = 1;
-    vertical->rectTransform->anchoredPosition = {-6, -6};
+    vertical->rectTransform->anchoredPosition = {-15, -6};
 
     AddConfigValueToggle(vertical, getConfig().ShowWarning);
     AddConfigValueToggle(vertical, getConfig().OverrideLength);
