@@ -1,10 +1,12 @@
 {
+  "$schema": "https://raw.githubusercontent.com/QuestPackageManager/QPM.Package/refs/heads/main/qpm.schema.json",
+  "version": "0.4.0",
   "sharedDir": "shared",
   "dependenciesDir": "extern",
   "info": {
     "name": "Transitions",
     "id": "transitions",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "url": null,
     "additionalData": {
       "overrideSoName": "libtransitions.so"
@@ -36,52 +38,51 @@
         "pwsh ./scripts/pull-tombstone.ps1 -analyze"
       ]
     },
-    "qmodIncludeDirs": [],
+    "ndk": "^27.2.12479018",
+    "qmodIncludeDirs": [
+      "build",
+      "extern/libs"
+    ],
     "qmodIncludeFiles": [],
     "qmodOutput": null
   },
   "dependencies": [
     {
       "id": "beatsaber-hook",
-      "versionRange": "^5.1.9",
-      "additionalData": {
-        "extraFiles": [
-          "src/inline-hook"
-        ]
-      }
-    },
-    {
-      "id": "scotland2",
-      "versionRange": "^0.1.0",
-      "additionalData": {
-        "includeQmod": false
-      }
-    },
-    {
-      "id": "config-utils",
-      "versionRange": "^1.1.0",
-      "additionalData": {}
-    },
-    {
-      "id": "bsml",
-      "versionRange": "^0.4.18",
-      "additionalData": {}
-    },
-    {
-      "id": "custom-types",
-      "versionRange": "^0.17.10",
+      "versionRange": "^6.4.0",
       "additionalData": {}
     },
     {
       "id": "bs-cordl",
-      "versionRange": "^3700.0.0",
+      "versionRange": "^4020.0.0",
       "additionalData": {}
     },
     {
-      "id": "paper",
-      "versionRange": "^3.6.1",
+      "id": "bsml",
+      "versionRange": "^0.4.49",
       "additionalData": {}
+    },
+    {
+      "id": "config-utils",
+      "versionRange": "^2.0.2",
+      "additionalData": {}
+    },
+    {
+      "id": "custom-types",
+      "versionRange": "^0.18.2",
+      "additionalData": {}
+    },
+    {
+      "id": "paper2_scotland2",
+      "versionRange": "^4.5.0",
+      "additionalData": {}
+    },
+    {
+      "id": "scotland2",
+      "versionRange": "^0.1.6",
+      "additionalData": {
+        "includeQmod": false
+      }
     }
-  ],
-  "additionalData": {}
+  ]
 }

@@ -32,8 +32,11 @@ add_compile_definitions(MOD_ID=\"${MOD_ID}\")
 recurse_files(cpp_file_list ${SOURCE_DIR}/*.cpp)
 recurse_files(c_file_list ${SOURCE_DIR}/*.c)
 
+recurse_files(src_inline_hook_beatsaber_hook_local_extra_c ${EXTERN_DIR}/includes/beatsaber-hook/shared/inline-hook/*.c)
+recurse_files(src_inline_hook_beatsaber_hook_local_extra_cpp ${EXTERN_DIR}/includes/beatsaber-hook/shared/inline-hook/*.cpp)
+
 # add all src files to compile
-add_library(${COMPILE_ID} SHARED ${cpp_file_list} ${c_file_list})
+add_library(${COMPILE_ID} SHARED ${cpp_file_list} ${c_file_list} ${src_inline_hook_beatsaber_hook_local_extra_c} ${src_inline_hook_beatsaber_hook_local_extra_cpp})
 
 target_include_directories(${COMPILE_ID} PRIVATE .)
 
