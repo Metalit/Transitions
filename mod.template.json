@@ -6,7 +6,7 @@
   "version": "${version}",
   "modloader": "Scotland2",
   "packageId": "com.beatgames.beatsaber",
-  "packageVersion": "1.40.3_4614",
+  "packageVersion": "1.40.4_5283",
   "description": "Speed up or remove boring transitions in the game",
   "coverImage": "cover.png",
   "dependencies": [],
