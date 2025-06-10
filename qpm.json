@@ -15,6 +15,9 @@
       "build": [
         "pwsh ./scripts/build.ps1 $0?"
       ],
+      "clean": [
+        "pwsh ./scripts/build.ps1 -clean"
+      ],
       "copy": [
         "pwsh ./scripts/copy.ps1 $0:?",
         "pwsh ./scripts/restart-game.ps1"
@@ -36,9 +39,12 @@
         "pwsh ./scripts/pull-tombstone.ps1 -analyze"
       ]
     },
-    "qmodIncludeDirs": [],
+    "qmodIncludeDirs": [
+      "./build",
+      "./extern/libs"
+    ],
     "qmodIncludeFiles": [],
-    "qmodOutput": null
+    "qmodOutput": "./Transitions.qmod"
   },
   "dependencies": [
     {
