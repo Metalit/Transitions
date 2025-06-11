@@ -19,12 +19,12 @@ MAKE_HOOK_MATCH(
     DefaultScenesTransitionsFromInit* self,
     bool goStraightToMenu,
     bool goStraightToEditor,
-    bool goToRecordingToolScene
+    bool goToRecordingToolScene,
+    System::Action* onFinishShaderWarmup
 ) {
     if (!getConfig().ShowWarning.GetValue())
         goStraightToMenu = true;
-
-    InitSceneTransitions(self, goStraightToMenu, goStraightToEditor, goToRecordingToolScene);
+    InitSceneTransitions(self, goStraightToMenu, goStraightToEditor, goToRecordingToolScene, onFinishShaderWarmup);
 }
 
 MAKE_HOOK_MATCH(
