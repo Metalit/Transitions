@@ -6,7 +6,7 @@
   "info": {
     "name": "Transitions",
     "id": "transitions",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "url": null,
     "additionalData": {
       "overrideSoName": "libtransitions.so",
@@ -39,7 +39,7 @@
         "pwsh ./scripts/pull-tombstone.ps1 -analyze"
       ]
     },
-    "ndk": "^27.2.12479018",
+    "ndk": "^27.3.13750724",
     "qmodIncludeDirs": [
       "build",
       "extern/libs"
@@ -55,12 +55,12 @@
     },
     {
       "id": "bs-cordl",
-      "versionRange": "^4006.0.0",
+      "versionRange": "4008.*",
       "additionalData": {}
     },
     {
       "id": "bsml",
-      "versionRange": "^0.4.53",
+      "versionRange": "^0.4.55",
       "additionalData": {}
     },
     {
