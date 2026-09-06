@@ -1,3 +1,5 @@
+#!/usr/bin/env pwsh
+
 $mod = "./mod.json"
 $modTemplate = Get-Item "./mod.template.json"
 $qpmShared = Get-Item "./qpm.shared.json"
