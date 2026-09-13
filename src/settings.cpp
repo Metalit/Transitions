@@ -1,8 +1,10 @@
 #include "settings.hpp"
 
-#include "HMUI/Touchable.hpp"
-#include "bsml/shared/BSML-Lite.hpp"
 #include "main.hpp"
+#include "bsml/shared/BSML-Lite.hpp"
+
+#include "HMUI/Touchable.hpp"
+#include "UnityEngine/UI/LayoutElement.hpp"
 
 void SettingsDidActivate(HMUI::ViewController* self, bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
     if (!firstActivation)

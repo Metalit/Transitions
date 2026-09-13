@@ -1,29 +1,31 @@
 #include "main.hpp"
 
+#include "settings.hpp"
+#include "beatsaber-hook/shared/hooking.hpp"
+#include "bsml/shared/BSML.hpp"
+
 #include "GlobalNamespace/GameScenesManager.hpp"
 #include "GlobalNamespace/HealthWarningFlowCoordinator.hpp"
 #include "GlobalNamespace/InitialDestinationResolver.hpp"
 #include "System/Threading/Tasks/Task.hpp"
-#include "bsml/shared/BSML.hpp"
-#include "logging.hpp"
-#include "settings.hpp"
+
+static modloader::ModInfo modInfo = {MOD_ID, VERSION, 0};
 
 using namespace GlobalNamespace;
 
-
 MAKE_HOOK_MATCH(
-    PresentHealthWarningAsync,
+    InitialDestinationResolver_PresentHealthWarningAsync,
     &InitialDestinationResolver::PresentHealthWarningAsync,
     System::Threading::Tasks::Task*,
     InitialDestinationResolver* self
 ) {
     if (!getConfig().ShowWarning.GetValue())
         return System::Threading::Tasks::Task::get_CompletedTask();
-    return PresentHealthWarningAsync(self);
+    return InitialDestinationResolver_PresentHealthWarningAsync(self);
 }
 
 MAKE_HOOK_MATCH(
-    PushSceneTransition,
+    GameScenesManager_PushScenes,
     &GameScenesManager::PushScenes,
     void,
     GameScenesManager* self,
@@ -35,11 +37,11 @@ MAKE_HOOK_MATCH(
     if (getConfig().OverrideLength.GetValue())
         minDuration = getConfig().TransitionLength.GetValue();
 
-    PushSceneTransition(self, scenesTransitionSetupData, minDuration, afterMinDurationCallback, finishCallback);
+    GameScenesManager_PushScenes(self, scenesTransitionSetupData, minDuration, afterMinDurationCallback, finishCallback);
 }
 
 MAKE_HOOK_MATCH(
-    PopSceneTransition,
+    GameScenesManager_PopScenes,
     &GameScenesManager::PopScenes,
     void,
     GameScenesManager* self,
@@ -50,11 +52,11 @@ MAKE_HOOK_MATCH(
     if (getConfig().OverrideLength.GetValue())
         minDuration = getConfig().TransitionLength.GetValue();
 
-    PopSceneTransition(self, minDuration, afterMinDurationCallback, finishCallback);
+    GameScenesManager_PopScenes(self, minDuration, afterMinDurationCallback, finishCallback);
 }
 
 MAKE_HOOK_MATCH(
-    ReplaceSceneTransition,
+    GameScenesManager_ReplaceScenes,
     &GameScenesManager::ReplaceScenes,
     void,
     GameScenesManager* self,
@@ -67,27 +69,25 @@ MAKE_HOOK_MATCH(
     if (getConfig().OverrideLength.GetValue())
         minDuration = getConfig().TransitionLength.GetValue();
 
-    ReplaceSceneTransition(self, scenesTransitionSetupData, beforeNewScenesActivateRoutines, minDuration, afterMinDurationCallback, finishCallback);
+    GameScenesManager_ReplaceScenes(
+        self, scenesTransitionSetupData, beforeNewScenesActivateRoutines, minDuration, afterMinDurationCallback, finishCallback
+    );
 }
 
-EXPORT_FUNC void setup(CModInfo& info) {
-    info.version = VERSION;
-    info.id = MOD_ID;
-    info.version_long = GIT_COMMIT;
-    modInfo.assign(info);
-
+extern "C" __attribute__((visibility("default"))) void setup(CModInfo* info) {
+    *info = modInfo.to_c();
     getConfig().Init(modInfo);
 
-    LOG_INFO("Completed setup!");
+    logger.info("Completed setup!");
 }
 
-EXPORT_FUNC void late_load() {
-
+extern "C" __attribute__((visibility("default"))) void late_load() {
     BSML::Register::RegisterSettingsMenu("Transitions", SettingsDidActivate, true);
 
-    LOG_INFO("Installing hooks...");
-    INSTALL_HOOK(Logger, PresentHealthWarningAsync);
-    INSTALL_HOOK(Logger, PushSceneTransition);
-    INSTALL_HOOK(Logger, PopSceneTransition);
-    INSTALL_HOOK(Logger, ReplaceSceneTransition);
+    logger.info("Installing hooks...");
+    INSTALL_HOOK(logger, InitialDestinationResolver_PresentHealthWarningAsync);
+    INSTALL_HOOK(logger, GameScenesManager_PushScenes);
+    INSTALL_HOOK(logger, GameScenesManager_PopScenes);
+    INSTALL_HOOK(logger, GameScenesManager_ReplaceScenes);
+    logger.info("Installed all hooks!");
 }

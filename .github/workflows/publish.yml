@@ -2,16 +2,15 @@ name: Publish
 
 env:
   module_id: transitions
-  qmodName: Transitions
 
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Version to release (v will be added to the tag)'
+      release_ver:
+        description: "Version to release (v will be added to the tag)"
         required: true
       release_msg:
-        description: 'Message for release'
+        description: "Message for release"
         required: true
 
 jobs:
@@ -19,57 +18,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         name: Checkout
         with:
           submodules: true
           lfs: true
 
-      - uses: seanmiddleditch/gha-setup-ninja@v3
-
-      - name: QPM Action
+      - name: Setup QPM
         uses: Fernthedev/qpm-action@v1
         with:
           workflow_token: ${{ secrets.GITHUB_TOKEN }}
-          resolve_ndk: true
           restore: true
+          resolve_ndk: true
           cache: true
-          version: "${{ github.event.inputs.version }}"
-          publish: false
 
-      - name: List Post Restore
-        run: |
-          echo includes:
-          ls -la ${GITHUB_WORKSPACE}/extern/includes
-          echo libs:
-          ls -la ${GITHUB_WORKSPACE}/extern/libs
-
-      - name: Build & create qmod
+      - name: Build & Create QMOD
         run: |
           cd ${GITHUB_WORKSPACE}
-          qpm s qmod
+          qpm qmod zip
 
-      - name: Get Library Name
-        id: libname
+      - name: Get Output Names
+        id: names
         run: |
-          cd ./build/
+          pattern="*.qmod"
+          files=( $pattern )
+          echo QMOD="${files[0]}" >> $GITHUB_OUTPUT
+          cd build
           pattern="lib${module_id}*.so"
           files=( $pattern )
-          echo NAME="${files[0]}" >> $GITHUB_OUTPUT
+          echo LIB="${files[0]}" >> $GITHUB_OUTPUT
+          cd debug
+          mv ${files[0]} debug_${files[0]}
 
-      - name: Rename debug
-        run: |
-          mv ./build/debug/${{ steps.libname.outputs.NAME }} ./build/debug/debug_${{ steps.libname.outputs.NAME }}
-
-      - name: Upload to Release
-        id: upload_file_release
-        uses: softprops/action-gh-release@v0.1.12
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           name: ${{ github.event.inputs.release_msg }}
-          tag_name: "v${{ github.event.inputs.version }}"
+          tag_name: "v${{ github.event.inputs.release_ver }}"
           files: |
-            ./build/${{ steps.libname.outputs.NAME }}
-            ./build/debug/debug_${{ steps.libname.outputs.NAME }}
-            ./${{ env.qmodName }}.qmod
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            build/${{ steps.names.outputs.LIB }}
+            build/debug/debug_${{ steps.names.outputs.LIB }}
+            ${{ steps.names.outputs.QMOD }}

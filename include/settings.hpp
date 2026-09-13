@@ -1,7 +1,8 @@
 #pragma once
 
-#include "HMUI/ViewController.hpp"
 #include "config-utils/shared/config-utils.hpp"
+
+#include "HMUI/ViewController.hpp"
 
 DECLARE_CONFIG(Config) {
     CONFIG_VALUE(ShowWarning, bool, "Show Warning", false, "Shows the health warning when the game launches");
