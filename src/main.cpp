@@ -1,30 +1,25 @@
 #include "main.hpp"
 
-#include "GlobalNamespace/DefaultScenesTransitionsFromInit.hpp"
 #include "GlobalNamespace/GameScenesManager.hpp"
-#include "beatsaber-hook/shared/utils/hooking.hpp"
+#include "GlobalNamespace/HealthWarningFlowCoordinator.hpp"
+#include "GlobalNamespace/InitialDestinationResolver.hpp"
+#include "System/Threading/Tasks/Task.hpp"
 #include "bsml/shared/BSML.hpp"
-#include "main.hpp"
-#include "scotland2/shared/modloader.h"
+#include "logging.hpp"
 #include "settings.hpp"
 
 using namespace GlobalNamespace;
 
-modloader::ModInfo modInfo{MOD_ID, VERSION, 0};
 
 MAKE_HOOK_MATCH(
-    InitSceneTransitions,
-    &DefaultScenesTransitionsFromInit::TransitionToNextScene,
-    void,
-    DefaultScenesTransitionsFromInit* self,
-    bool goStraightToMenu,
-    bool goStraightToEditor,
-    bool goToRecordingToolScene,
-    System::Action* onFinishShaderWarmup
+    PresentHealthWarningAsync,
+    &InitialDestinationResolver::PresentHealthWarningAsync,
+    System::Threading::Tasks::Task*,
+    InitialDestinationResolver* self
 ) {
     if (!getConfig().ShowWarning.GetValue())
-        goStraightToMenu = true;
-    InitSceneTransitions(self, goStraightToMenu, goStraightToEditor, goToRecordingToolScene, onFinishShaderWarmup);
+        return System::Threading::Tasks::Task::get_CompletedTask();
+    return PresentHealthWarningAsync(self);
 }
 
 MAKE_HOOK_MATCH(
@@ -32,7 +27,7 @@ MAKE_HOOK_MATCH(
     &GameScenesManager::PushScenes,
     void,
     GameScenesManager* self,
-    ScenesTransitionSetupDataSO* scenesTransitionSetupData,
+    ScenesTransitionSetupData* scenesTransitionSetupData,
     float minDuration,
     System::Action* afterMinDurationCallback,
     System::Action_1<Zenject::DiContainer*>* finishCallback
@@ -63,7 +58,7 @@ MAKE_HOOK_MATCH(
     &GameScenesManager::ReplaceScenes,
     void,
     GameScenesManager* self,
-    ScenesTransitionSetupDataSO* scenesTransitionSetupData,
+    ScenesTransitionSetupData* scenesTransitionSetupData,
     ArrayW<System::Collections::IEnumerator*> beforeNewScenesActivateRoutines,
     float minDuration,
     System::Action* afterMinDurationCallback,
@@ -75,28 +70,24 @@ MAKE_HOOK_MATCH(
     ReplaceSceneTransition(self, scenesTransitionSetupData, beforeNewScenesActivateRoutines, minDuration, afterMinDurationCallback, finishCallback);
 }
 
-extern "C" void setup(CModInfo* info) {
-    info->version = VERSION;
-    info->id = MOD_ID;
-    info->version_long = 0;
-    modInfo.assign(*info);
-
-    Paper::Logger::RegisterFileContextId(MOD_ID);
+EXPORT_FUNC void setup(CModInfo& info) {
+    info.version = VERSION;
+    info.id = MOD_ID;
+    info.version_long = GIT_COMMIT;
+    modInfo.assign(info);
 
     getConfig().Init(modInfo);
 
     LOG_INFO("Completed setup!");
 }
 
-extern "C" void late_load() {
-    il2cpp_functions::Init();
+EXPORT_FUNC void late_load() {
 
     BSML::Register::RegisterSettingsMenu("Transitions", SettingsDidActivate, true);
 
     LOG_INFO("Installing hooks...");
-    INSTALL_HOOK(logger, InitSceneTransitions);
-    INSTALL_HOOK(logger, PushSceneTransition);
-    INSTALL_HOOK(logger, PopSceneTransition);
-    INSTALL_HOOK(logger, ReplaceSceneTransition);
-    LOG_INFO("Installed all hooks!");
+    INSTALL_HOOK(Logger, PresentHealthWarningAsync);
+    INSTALL_HOOK(Logger, PushSceneTransition);
+    INSTALL_HOOK(Logger, PopSceneTransition);
+    INSTALL_HOOK(Logger, ReplaceSceneTransition);
 }

@@ -1,3 +1,5 @@
+#!/usr/bin/env pwsh
+
 Param(
     [Parameter(Mandatory=$false)]
     [Switch] $clean,
@@ -70,5 +72,10 @@ foreach ($fileName in $modJson.lateModFiles) {
 
 if ($log -eq $true) {
     & adb logcat -c
+}
+
+& $PSScriptRoot/restart-game.ps1
+
+if ($log -eq $true) {
     & $PSScriptRoot/start-logging.ps1 -self:$self -all:$all -custom:$custom -file:$file
 }

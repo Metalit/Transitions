@@ -1,19 +1,17 @@
 # include some defines automatically made by qpm
 include(qpm_defines.cmake)
 
-# Enable link time optimization
-# In my experience, this can be highly unstable but it nets a huge size optimization and likely performance
-# However, the instability was seen using Android.mk/ndk-build builds. With Ninja + CMake, this problem seems to have been solved.
-# As always, test thoroughly
-# - Fern
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-
 cmake_minimum_required(VERSION 3.21)
 project(${COMPILE_ID})
 
 # c++ standard
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED 20)
+set(CMAKE_CXX_STANDARD 26)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Build type" FORCE)
+endif()
+message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -22,8 +20,38 @@ set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # compile options used
-add_compile_options(-frtti -fexceptions)
-add_compile_options(-O3)
+add_link_options(-Wl,--exclude-libs,ALL)
+add_compile_options(-frtti -fPIE -fPIC -fexceptions -fvisibility=hidden)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+    add_compile_options(-O3 -flto)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+else()
+    add_compile_options(-O0 -g)
+endif()
+
+# get git info
+execute_process(COMMAND git config user.name OUTPUT_VARIABLE GIT_USER)
+execute_process(COMMAND git branch --show-current OUTPUT_VARIABLE GIT_BRANCH)
+execute_process(COMMAND git rev-parse --short HEAD OUTPUT_VARIABLE GIT_COMMIT)
+execute_process(COMMAND git diff-index --quiet HEAD RESULT_VARIABLE GIT_MODIFIED)
+
+string(STRIP "${GIT_USER}" GIT_USER)
+string(STRIP "${GIT_BRANCH}" GIT_BRANCH)
+string(STRIP "${GIT_COMMIT}" GIT_COMMIT)
+string(STRIP "${GIT_MODIFIED}" GIT_MODIFIED)
+
+message(STATUS "GIT_USER: ${GIT_USER}")
+message(STATUS "GIT_BRANCH: ${GIT_BRANCH}")
+message(STATUS "GIT_COMMIT: 0x${GIT_COMMIT}")
+message(STATUS "GIT_MODIFIED: ${GIT_MODIFIED}")
+
+# set git defines
+add_compile_definitions(GIT_USER=\"${GIT_USER}\")
+add_compile_definitions(GIT_BRANCH=\"${GIT_BRANCH}\")
+add_compile_definitions(GIT_COMMIT=0x${GIT_COMMIT})
+add_compile_definitions(GIT_MODIFIED=${GIT_MODIFIED})
+
 # compile definitions used
 add_compile_definitions(VERSION=\"${MOD_VERSION}\")
 add_compile_definitions(MOD_ID=\"${MOD_ID}\")

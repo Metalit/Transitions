@@ -1,3 +1,5 @@
+#!/usr/bin/env pwsh
+
 Param(
     [Parameter(Mandatory=$false)]
     [Switch] $self,
@@ -42,8 +44,9 @@ $command = "adb logcat "
 
 if ($all -eq $false) {
     $loops = 0
-    while ([string]::IsNullOrEmpty($bspid) -and $loops -lt 3) {
-        Start-Sleep -Milliseconds 100
+    $maxRetries = 30
+    while ([string]::IsNullOrEmpty($bspid) -and $loops -lt $maxRetries) {
+        Start-Sleep -Milliseconds 500
         $bspid = adb shell pidof com.beatgames.beatsaber
         $loops += 1
     }

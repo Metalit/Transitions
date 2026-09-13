@@ -1,3 +1,5 @@
+#!/usr/bin/env pwsh
+
 Param(
     [Parameter(Mandatory=$false)]
     [String] $qmodName="",

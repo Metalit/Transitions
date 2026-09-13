@@ -1,8 +1,7 @@
 #pragma once
 
-#include "beatsaber-hook/shared/utils/logging.hpp"
+#include "_config.h"
+#include "scotland2/shared/loader.hpp"
+#include "beatsaber-hook/shared/hooking.hpp"
 
-#define LOG_INFO(...) logger.info(__VA_ARGS__)
-#define LOG_ERROR(...) logger.error(__VA_ARGS__)
-
-constexpr auto logger = Paper::ConstLoggerContext(MOD_ID);
+static inline modloader::ModInfo modInfo = {MOD_ID, VERSION, GIT_COMMIT};
